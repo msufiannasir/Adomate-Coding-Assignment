@@ -46,16 +46,21 @@ export default function Canvas({
 
   // Load background image
   useEffect(() => {
-    if (backgroundImage) {
+    if (backgroundImage && isClient) {
       const img = new window.Image();
+      img.crossOrigin = 'anonymous'; // Handle CORS issues
       img.onload = () => {
         setBackgroundImg(img);
+      };
+      img.onerror = (error) => {
+        console.error('Failed to load image:', error);
+        setBackgroundImg(null);
       };
       img.src = backgroundImage;
     } else {
       setBackgroundImg(null);
     }
-  }, [backgroundImage]);
+  }, [backgroundImage, isClient]);
 
   // Update transformer when selection changes
   useEffect(() => {
@@ -194,6 +199,14 @@ export default function Canvas({
       </div>
     );
   }
+
+  // Debug logging
+  console.log('Canvas render:', { 
+    isClient, 
+    backgroundImage: !!backgroundImage, 
+    backgroundImg: !!backgroundImg,
+    textLayersCount: textLayers.length 
+  });
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg max-w-full">

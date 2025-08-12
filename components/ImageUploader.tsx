@@ -24,14 +24,24 @@ export default function ImageUploader({ onImageUpload, onCanvasSizeChange }: Ima
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageUrl = e.target?.result as string;
+      console.log('Image uploaded:', { fileSize: file.size, imageUrl: imageUrl.substring(0, 50) + '...' });
       
       // Create image to get dimensions
       const img = new Image();
       img.onload = () => {
+        console.log('Image loaded with dimensions:', { width: img.width, height: img.height });
         onImageUpload(imageUrl);
         onCanvasSizeChange({ width: img.width, height: img.height });
       };
+      img.onerror = (error) => {
+        console.error('Failed to load image:', error);
+        alert('Failed to load the image. Please try again.');
+      };
       img.src = imageUrl;
+    };
+    reader.onerror = (error) => {
+      console.error('Failed to read file:', error);
+      alert('Failed to read the file. Please try again.');
     };
     reader.readAsDataURL(file);
   };
@@ -49,13 +59,23 @@ export default function ImageUploader({ onImageUpload, onCanvasSizeChange }: Ima
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageUrl = e.target?.result as string;
+      console.log('Image uploaded (drop):', { fileSize: file.size, imageUrl: imageUrl.substring(0, 50) + '...' });
       
       const img = new Image();
       img.onload = () => {
+        console.log('Image loaded with dimensions (drop):', { width: img.width, height: img.height });
         onImageUpload(imageUrl);
         onCanvasSizeChange({ width: img.width, height: img.height });
       };
+      img.onerror = (error) => {
+        console.error('Failed to load image (drop):', error);
+        alert('Failed to load the image. Please try again.');
+      };
       img.src = imageUrl;
+    };
+    reader.onerror = (error) => {
+      console.error('Failed to read file (drop):', error);
+      alert('Failed to read the file. Please try again.');
     };
     reader.readAsDataURL(file);
   };
