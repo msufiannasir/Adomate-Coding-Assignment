@@ -1,103 +1,299 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import ImageUploader from '@/components/ImageUploader';
+import Canvas from '@/components/Canvas';
+import TextEditor from '@/components/TextEditor';
+import LayerPanel from '@/components/LayerPanel';
+import Toolbar from '@/components/Toolbar';
+import ExportButton from '@/components/ExportButton';
+import { TextLayer, HistoryState } from '@/types';
+
+export default function ImageTextComposer() {
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [textLayers, setTextLayers] = useState<TextLayer[]>([]);
+  const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
+  const [selectedLayerIds, setSelectedLayerIds] = useState<string[]>([]);
+
+  const handleSelectLayer = (id: string | null) => {
+    setSelectedLayerId(id);
+    if (id) {
+      setSelectedLayerIds([id]);
+    } else {
+      setSelectedLayerIds([]);
+    }
+  };
+
+  const handleMultiSelect = (id: string, isMultiSelect: boolean) => {
+    if (isMultiSelect) {
+      setSelectedLayerIds(prev => 
+        prev.includes(id) 
+          ? prev.filter(layerId => layerId !== id)
+          : [...prev, id]
+      );
+    } else {
+      setSelectedLayerId(id);
+      setSelectedLayerIds([id]);
+    }
+  };
+  const [history, setHistory] = useState<HistoryState[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+
+  // Load saved state from localStorage on mount
+  useEffect(() => {
+    const savedState = localStorage.getItem('imageTextComposer');
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        setBackgroundImage(parsed.backgroundImage);
+        setTextLayers(parsed.textLayers || []);
+        setCanvasSize(parsed.canvasSize || { width: 800, height: 600 });
+      } catch (error) {
+        console.error('Error loading saved state:', error);
+      }
+    }
+  }, []);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    const stateToSave = {
+      backgroundImage,
+      textLayers,
+      canvasSize,
+    };
+    localStorage.setItem('imageTextComposer', JSON.stringify(stateToSave));
+  }, [backgroundImage, textLayers, canvasSize]);
+
+  // Add to history
+  const addToHistory = (newState: Partial<HistoryState>) => {
+    const newHistoryState = {
+      textLayers: [...textLayers],
+      selectedLayerId,
+      ...newState,
+    };
+
+    // Remove any history after current index
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newHistoryState);
+
+    // Keep only last 20 states
+    if (newHistory.length > 20) {
+      newHistory.shift();
+    }
+
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
+
+  // Undo
+  const undo = () => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      const state = history[newIndex];
+      setTextLayers(state.textLayers);
+      setSelectedLayerId(state.selectedLayerId);
+      setHistoryIndex(newIndex);
+    }
+  };
+
+  // Redo
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      const state = history[newIndex];
+      setTextLayers(state.textLayers);
+      setSelectedLayerId(state.selectedLayerId);
+      setHistoryIndex(newIndex);
+    }
+  };
+
+  // Reset
+  const reset = () => {
+    setBackgroundImage(null);
+    setTextLayers([]);
+    setSelectedLayerId(null);
+    setHistory([]);
+    setHistoryIndex(-1);
+    setCanvasSize({ width: 800, height: 600 });
+    localStorage.removeItem('imageTextComposer');
+  };
+
+  // Add text layer
+  const addTextLayer = () => {
+    const newLayer: TextLayer = {
+      id: `text-${Date.now()}`,
+      text: 'Double click to edit',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 50,
+      fontSize: 24,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#000000',
+      opacity: 1,
+      textAlign: 'left',
+      rotation: 0,
+      lineHeight: 1.2,
+      letterSpacing: 0,
+      textShadow: {
+        color: '#000000',
+        blur: 0,
+        offsetX: 0,
+        offsetY: 0,
+      },
+      isLocked: false,
+      isSelected: false,
+    };
+
+    const newLayers = [...textLayers, newLayer];
+    setTextLayers(newLayers);
+    setSelectedLayerId(newLayer.id);
+    addToHistory({ textLayers: newLayers, selectedLayerId: newLayer.id });
+  };
+
+  // Update text layer
+  const updateTextLayer = (id: string, updates: Partial<TextLayer>) => {
+    const newLayers = textLayers.map(layer =>
+      layer.id === id ? { ...layer, ...updates } : layer
+    );
+    setTextLayers(newLayers);
+    addToHistory({ textLayers: newLayers });
+  };
+
+  // Delete text layer
+  const deleteTextLayer = (id: string) => {
+    const newLayers = textLayers.filter(layer => layer.id !== id);
+    setTextLayers(newLayers);
+    if (selectedLayerId === id) {
+      setSelectedLayerId(null);
+    }
+    addToHistory({ textLayers: newLayers, selectedLayerId: selectedLayerId === id ? null : selectedLayerId });
+  };
+
+  // Reorder layers
+  const reorderLayers = (fromIndex: number, toIndex: number) => {
+    const newLayers = [...textLayers];
+    const [movedLayer] = newLayers.splice(fromIndex, 1);
+    newLayers.splice(toIndex, 0, movedLayer);
+    setTextLayers(newLayers);
+    addToHistory({ textLayers: newLayers });
+  };
+
+  // Duplicate layer
+  const duplicateLayer = (id: string) => {
+    const layerToDuplicate = textLayers.find(l => l.id === id);
+    if (!layerToDuplicate) return;
+
+    const newLayer: TextLayer = {
+      ...layerToDuplicate,
+      id: `text-${Date.now()}`,
+      x: layerToDuplicate.x + 20,
+      y: layerToDuplicate.y + 20,
+    };
+
+    const newLayers = [...textLayers, newLayer];
+    setTextLayers(newLayers);
+    setSelectedLayerId(newLayer.id);
+    setSelectedLayerIds([newLayer.id]);
+    addToHistory({ textLayers: newLayers, selectedLayerId: newLayer.id });
+  };
+
+  // Toggle layer lock
+  const toggleLayerLock = (id: string) => {
+    const newLayers = textLayers.map(layer =>
+      layer.id === id ? { ...layer, isLocked: !layer.isLocked } : layer
+    );
+    setTextLayers(newLayers);
+    addToHistory({ textLayers: newLayers });
+  };
+
+  // Update multiple layers
+  const updateMultipleLayers = (updates: Partial<TextLayer>) => {
+    const newLayers = textLayers.map(layer =>
+      selectedLayerIds.includes(layer.id) ? { ...layer, ...updates } : layer
+    );
+    setTextLayers(newLayers);
+    addToHistory({ textLayers: newLayers });
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gray-100">
+      <div className="flex h-screen">
+        {/* Left Panel - Tools and Layers */}
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <h1 className="text-xl font-bold text-gray-800">Image Text Composer</h1>
+          </div>
+          
+          <Toolbar
+            onAddText={addTextLayer}
+            onUndo={undo}
+            onRedo={redo}
+            onReset={reset}
+            canUndo={historyIndex > 0}
+            canRedo={historyIndex < history.length - 1}
+            historyIndex={historyIndex}
+            historyLength={history.length}
+          />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+          <LayerPanel
+            layers={textLayers}
+            selectedLayerId={selectedLayerId}
+            selectedLayerIds={selectedLayerIds}
+            onSelectLayer={setSelectedLayerId}
+            onMultiSelect={handleMultiSelect}
+            onDeleteLayer={deleteTextLayer}
+            onReorderLayers={reorderLayers}
+            onToggleLock={toggleLayerLock}
+            onDuplicate={duplicateLayer}
+          />
+
+          {selectedLayerId && (
+            <TextEditor
+              layer={textLayers.find(l => l.id === selectedLayerId)!}
+              onUpdate={updateTextLayer}
+              onDuplicate={duplicateLayer}
+              onToggleLock={toggleLayerLock}
+              isMultiSelect={selectedLayerIds.length > 1}
+              onUpdateMultiple={updateMultipleLayers}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          )}
+          
+          <ExportButton
+            backgroundImage={backgroundImage}
+            textLayers={textLayers}
+            canvasSize={canvasSize}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Main Canvas Area */}
+        <div className="flex-1 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <ImageUploader
+              onImageUpload={setBackgroundImage}
+              onCanvasSizeChange={setCanvasSize}
+            />
+          </div>
+          
+          <div className="flex-1 flex items-center justify-center bg-gray-50 p-4 overflow-hidden">
+            <div className="max-w-full max-h-full">
+                          <Canvas
+              backgroundImage={backgroundImage}
+              textLayers={textLayers}
+              selectedLayerId={selectedLayerId}
+              selectedLayerIds={selectedLayerIds}
+              onSelectLayer={handleSelectLayer}
+              onMultiSelect={handleMultiSelect}
+              onUpdateLayer={updateTextLayer}
+              onUpdateMultipleLayers={updateMultipleLayers}
+              canvasSize={canvasSize}
+            />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
