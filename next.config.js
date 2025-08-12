@@ -2,18 +2,19 @@
 const nextConfig = {
   webpack: (config, { isServer }) => {
     // Handle canvas module for Konva.js
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false,
+      'canvas-prebuilt': false,
+    };
+    
+    // Exclude canvas from client-side bundle
     if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        canvas: false,
-        'canvas-prebuilt': false,
-      };
+      config.externals = config.externals || [];
+      config.externals.push('canvas');
     }
     
     return config;
-  },
-  experimental: {
-    esmExternals: 'loose',
   },
   // Disable ESLint during build for Vercel
   eslint: {
