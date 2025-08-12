@@ -1,15 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { Stage, Layer, Image, Text, Transformer } from 'react-konva';
 import { TextLayer, CanvasSize } from '@/types';
-
-// Dynamically import Konva components to avoid SSR issues
-const Stage = dynamic(() => import('react-konva').then((mod) => mod.Stage), { ssr: false });
-const Layer = dynamic(() => import('react-konva').then((mod) => mod.Layer), { ssr: false });
-const Image = dynamic(() => import('react-konva').then((mod) => mod.Image), { ssr: false });
-const Text = dynamic(() => import('react-konva').then((mod) => mod.Text), { ssr: false });
-const Transformer = dynamic(() => import('react-konva').then((mod) => mod.Transformer), { ssr: false });
 
 interface CanvasProps {
   backgroundImage: string | null;
@@ -37,22 +30,16 @@ export default function Canvas({
   const stageRef = useRef<any>(null);
   const transformerRef = useRef<any>(null);
   const [backgroundImg, setBackgroundImg] = useState<HTMLImageElement | null>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  // Ensure we're on the client side
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   // Load background image
   useEffect(() => {
-    if (backgroundImage && isClient) {
+    if (backgroundImage) {
       const img = new window.Image();
       img.crossOrigin = 'anonymous'; // Handle CORS issues
       img.onload = () => {
         setBackgroundImg(img);
       };
-      img.onerror = (error) => {
+      img.onerror = (error: string | Event) => {
         console.error('Failed to load image:', error);
         setBackgroundImg(null);
       };
@@ -60,22 +47,22 @@ export default function Canvas({
     } else {
       setBackgroundImg(null);
     }
-  }, [backgroundImage, isClient]);
+  }, [backgroundImage]);
 
   // Update transformer when selection changes
   useEffect(() => {
-    if (selectedLayerId && transformerRef.current && isClient) {
+    if (selectedLayerId && transformerRef.current) {
       const stage = stageRef.current;
       const selectedNode = stage.findOne(`#${selectedLayerId}`);
       if (selectedNode) {
         transformerRef.current.nodes([selectedNode]);
         transformerRef.current.getLayer().batchDraw();
       }
-    } else if (transformerRef.current && isClient) {
+    } else if (transformerRef.current) {
       transformerRef.current.nodes([]);
       transformerRef.current.getLayer().batchDraw();
     }
-  }, [selectedLayerId, isClient]);
+  }, [selectedLayerId]);
 
   const handleTextClick = (layerId: string, e: any) => {
     const isMultiSelect = e.evt.ctrlKey || e.evt.metaKey;
@@ -186,27 +173,6 @@ export default function Canvas({
     displayWidth = canvasSize.width * scale;
     displayHeight = canvasSize.height * scale;
   }
-
-  // Don't render Konva components on server side
-  if (!isClient) {
-    return (
-      <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg max-w-full">
-        <div className="flex justify-center">
-          <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
-            <p className="text-gray-500">Loading canvas...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Debug logging
-  console.log('Canvas render:', { 
-    isClient, 
-    backgroundImage: !!backgroundImage, 
-    backgroundImg: !!backgroundImg,
-    textLayersCount: textLayers.length 
-  });
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg max-w-full">
