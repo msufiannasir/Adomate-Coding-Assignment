@@ -79,11 +79,11 @@ export default function ExportButton({ backgroundImage, textLayers, canvasSize }
   };
 
   return (
-    <div className="p-4 border-t border-gray-200">
+    <div className="p-4 border-t border-[#475569] bg-gradient-to-b from-[#1e293b] to-[#334155]">
       <button
         onClick={exportAsPNG}
         disabled={!backgroundImage}
-        className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-[#10b981] to-[#059669] text-white px-4 py-2 rounded-lg hover:from-[#059669] hover:to-[#047857] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         Export as PNG
       </button>

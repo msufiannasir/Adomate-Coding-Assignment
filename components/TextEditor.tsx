@@ -90,16 +90,16 @@ export default function TextEditor({
   };
 
   return (
-    <div className="p-4 border-t border-gray-200 space-y-4">
+    <div className="p-4 border-t border-[#475569] space-y-4 bg-gradient-to-b from-[#1e293b] to-[#334155]">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-gray-900">
+        <h3 className="font-medium text-white">
           {isMultiSelect ? 'Multiple Layers Selected' : 'Text Properties'}
         </h3>
         <div className="flex space-x-2">
           {onDuplicate && (
             <button
               onClick={() => onDuplicate(layer.id)}
-              className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="p-2 text-[#94a3b8] hover:text-[#3b82f6] transition-colors"
               title="Duplicate layer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +110,7 @@ export default function TextEditor({
           {onToggleLock && (
             <button
               onClick={() => onToggleLock(layer.id)}
-              className={`p-2 transition-colors ${layer.isLocked ? 'text-red-600' : 'text-gray-600 hover:text-gray-800'}`}
+              className={`p-2 transition-colors ${layer.isLocked ? 'text-red-500' : 'text-[#94a3b8] hover:text-white'}`}
               title={layer.isLocked ? 'Unlock layer' : 'Lock layer'}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,14 +127,14 @@ export default function TextEditor({
       
       {/* Text Content */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Text Content
         </label>
         <textarea
           value={text}
           onChange={(e) => handleTextChange(e.target.value)}
           onBlur={handleBlur}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
           rows={3}
           placeholder="Enter your text here..."
         />
@@ -142,13 +142,13 @@ export default function TextEditor({
 
       {/* Font Family */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Font Family
         </label>
         <select
           value={layer.fontFamily}
           onChange={(e) => onUpdate(layer.id, { fontFamily: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
         >
           <optgroup label="System Fonts">
             {SYSTEM_FONTS.map((font) => (
@@ -169,7 +169,7 @@ export default function TextEditor({
 
       {/* Font Size */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Font Size: {layer.fontSize}px
         </label>
         <input
@@ -184,13 +184,13 @@ export default function TextEditor({
 
       {/* Font Weight */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Font Weight
         </label>
         <select
           value={layer.fontWeight}
           onChange={(e) => onUpdate(layer.id, { fontWeight: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
         >
           {FONT_WEIGHTS.map((weight) => (
             <option key={weight} value={weight}>
@@ -202,7 +202,7 @@ export default function TextEditor({
 
       {/* Text Color */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Text Color
         </label>
         <div className="flex items-center space-x-2">
@@ -210,13 +210,13 @@ export default function TextEditor({
             type="color"
             value={layer.color}
             onChange={(e) => onUpdate(layer.id, { color: e.target.value })}
-            className="w-12 h-10 border border-gray-300 rounded-md cursor-pointer"
+            className="w-12 h-10 border border-[#475569] rounded-lg cursor-pointer shadow-sm"
           />
           <input
             type="text"
             value={layer.color}
             onChange={(e) => onUpdate(layer.id, { color: e.target.value })}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
             placeholder="#000000"
           />
         </div>
@@ -224,7 +224,7 @@ export default function TextEditor({
 
       {/* Opacity */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Opacity: {Math.round(layer.opacity * 100)}%
         </label>
         <input
@@ -240,7 +240,7 @@ export default function TextEditor({
 
       {/* Text Alignment */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Text Alignment
         </label>
         <div className="flex space-x-2">
@@ -251,8 +251,8 @@ export default function TextEditor({
               className={`
                 flex-1 px-3 py-2 border rounded-md text-sm font-medium transition-colors
                 ${layer.textAlign === align.value
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] text-white border-[#3b82f6]'
+                  : 'bg-[#1e293b] text-white border-[#475569] hover:bg-[#334155]'
                 }
               `}
             >
@@ -265,32 +265,32 @@ export default function TextEditor({
       {/* Position and Size */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white mb-2">
             X Position
           </label>
           <input
             type="number"
             value={Math.round(layer.x)}
             onChange={(e) => onUpdate(layer.id, { x: parseInt(e.target.value) || 0 })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white mb-2">
             Y Position
           </label>
           <input
             type="number"
             value={Math.round(layer.y)}
             onChange={(e) => onUpdate(layer.id, { y: parseInt(e.target.value) || 0 })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[#475569] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent bg-[#1e293b] text-white shadow-sm"
           />
         </div>
       </div>
 
       {/* Rotation */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Rotation: {Math.round(layer.rotation)}°
         </label>
         <input
@@ -305,7 +305,7 @@ export default function TextEditor({
 
       {/* Line Height */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Line Height: {layer.lineHeight || 1.2}
         </label>
         <input
@@ -321,7 +321,7 @@ export default function TextEditor({
 
       {/* Letter Spacing */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Letter Spacing: {layer.letterSpacing || 0}px
         </label>
         <input
@@ -337,7 +337,7 @@ export default function TextEditor({
 
       {/* Text Shadow */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Text Shadow
         </label>
         <div className="space-y-2">
@@ -355,10 +355,10 @@ export default function TextEditor({
               })}
               className="w-8 h-8 border border-gray-300 rounded cursor-pointer"
             />
-            <span className="text-xs text-gray-500">Color</span>
+            <span className="text-xs text-[#94a3b8]">Color</span>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Blur: {layer.textShadow?.blur || 0}px</label>
+            <label className="block text-xs text-[#94a3b8] mb-1">Blur: {layer.textShadow?.blur || 0}px</label>
             <input
               type="range"
               min="0"
@@ -377,7 +377,7 @@ export default function TextEditor({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Offset X: {layer.textShadow?.offsetX || 0}px</label>
+              <label className="block text-xs text-[#94a3b8] mb-1">Offset X: {layer.textShadow?.offsetX || 0}px</label>
               <input
                 type="range"
                 min="-20"
@@ -395,7 +395,7 @@ export default function TextEditor({
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Offset Y: {layer.textShadow?.offsetY || 0}px</label>
+                              <label className="block text-xs text-[#94a3b8] mb-1">Offset Y: {layer.textShadow?.offsetY || 0}px</label>
               <input
                 type="range"
                 min="-20"

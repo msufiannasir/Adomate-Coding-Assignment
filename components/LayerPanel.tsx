@@ -43,18 +43,18 @@ export default function LayerPanel({
 
   if (layers.length === 0) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        <p className="text-sm">No text layers yet</p>
-        <p className="text-xs mt-1">Click "Add Text Layer" to get started</p>
+      <div className="p-4 text-center text-[#94a3b8] bg-gradient-to-b from-[#1e293b] to-[#334155]">
+        <p className="text-sm font-medium">No text layers yet</p>
+        <p className="text-xs mt-1 opacity-80">Click "Add Text Layer" to get started</p>
       </div>
     );
   }
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="font-medium text-gray-900">Layers ({layers.length})</h3>
-        <p className="text-xs text-gray-500 mt-1">Drag to reorder</p>
+      <div className="p-4 border-b border-[#475569] bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6]">
+        <h3 className="font-medium text-white">Layers ({layers.length})</h3>
+        <p className="text-xs text-white opacity-80 mt-1">Drag to reorder</p>
       </div>
       
       <div className="space-y-1 p-2">
@@ -66,10 +66,10 @@ export default function LayerPanel({
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, index)}
             className={`
-              flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors
+              flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 shadow-md
               ${selectedLayerIds.includes(layer.id)
-                ? 'bg-blue-100 border border-blue-300' 
-                : 'bg-gray-50 hover:bg-gray-100 border border-transparent'
+                ? 'bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] bg-opacity-20 border-2 border-[#3b82f6] shadow-lg' 
+                : 'bg-gradient-to-r from-[#475569] to-[#64748b] hover:from-[#64748b] hover:to-[#94a3b8] border border-transparent hover:shadow-lg'
               }
             `}
             onClick={(e) => {
@@ -79,12 +79,12 @@ export default function LayerPanel({
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"></div>
+                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] flex-shrink-0 shadow-sm"></div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-white truncate">
                     {layer.text || 'Empty text'}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#94a3b8]">
                     {layer.fontFamily} • {layer.fontSize}px
                   </p>
                 </div>
@@ -104,7 +104,7 @@ export default function LayerPanel({
                   e.stopPropagation();
                   onDuplicate(layer.id);
                 }}
-                className="p-1 text-gray-400 hover:text-blue-500 transition-colors"
+                className="p-1 text-[#94a3b8] hover:text-[#3b82f6] transition-colors"
                 title="Duplicate layer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@ export default function LayerPanel({
                   e.stopPropagation();
                   onToggleLock(layer.id);
                 }}
-                className={`p-1 transition-colors ${layer.isLocked ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1 transition-colors ${layer.isLocked ? 'text-red-500' : 'text-[#94a3b8] hover:text-white'}`}
                 title={layer.isLocked ? 'Unlock layer' : 'Lock layer'}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +132,7 @@ export default function LayerPanel({
                   e.stopPropagation();
                   onDeleteLayer(layer.id);
                 }}
-                className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                className="p-1 text-[#94a3b8] hover:text-red-500 transition-colors"
                 title="Delete layer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

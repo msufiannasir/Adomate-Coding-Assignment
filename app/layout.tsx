@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Image Text Composer',
+  title: 'Image Text Maker',
   description: 'A desktop image editing tool for adding customizable text overlays to PNG images',
 }
 

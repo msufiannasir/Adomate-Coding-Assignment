@@ -87,24 +87,24 @@ export default function ImageUploader({ onImageUpload, onCanvasSizeChange }: Ima
   return (
     <div className="space-y-4">
       <div
-        className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+        className="border-2 border-dashed border-[#3b82f6] rounded-xl p-8 text-center hover:border-[#8b5cf6] transition-all duration-300 cursor-pointer bg-gradient-to-br from-[#1e293b] to-[#334155] shadow-lg hover:shadow-xl transform hover:scale-105"
         onClick={() => fileInputRef.current?.click()}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        <div className="space-y-2">
-          <div className="text-gray-600">
-            <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+        <div className="space-y-3">
+          <div className="text-[#3b82f6]">
+            <svg className="mx-auto h-16 w-16" stroke="currentColor" fill="none" viewBox="0 0 48 48">
               <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="text-sm text-gray-600">
-            <span className="font-medium text-blue-600 hover:text-blue-500">
+          <div className="text-sm text-white">
+            <span className="font-medium text-[#3b82f6] hover:text-[#8b5cf6] transition-colors">
               Click to upload
             </span>{' '}
             or drag and drop
           </div>
-          <p className="text-xs text-gray-500">PNG files only</p>
+          <p className="text-xs text-[#94a3b8]">PNG files only</p>
         </div>
       </div>
       

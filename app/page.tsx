@@ -219,12 +219,12 @@ export default function ImageTextComposer() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155]">
       <div className="flex h-screen">
         {/* Left Panel - Tools and Layers */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-          <div className="p-4 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-800">Image Text Composer</h1>
+        <div className="w-80 bg-[#1e293b] border-r border-[#475569] flex flex-col shadow-xl">
+          <div className="p-4 border-b border-[#475569] bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6]">
+            <h1 className="text-xl font-bold text-white">Image Text Maker</h1>
           </div>
           
           <Toolbar
@@ -270,14 +270,14 @@ export default function ImageTextComposer() {
 
         {/* Main Canvas Area */}
         <div className="flex-1 flex flex-col">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-[#475569] bg-gradient-to-r from-[#1e293b] to-[#334155]">
             <ImageUploader
               onImageUpload={setBackgroundImage}
               onCanvasSizeChange={setCanvasSize}
             />
           </div>
           
-          <div className="flex-1 flex items-center justify-center bg-gray-50 p-4 overflow-hidden">
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-[#334155] via-[#475569] to-[#64748b] p-4 overflow-hidden">
             <div className="max-w-full max-h-full">
                           <Canvas
               backgroundImage={backgroundImage}
